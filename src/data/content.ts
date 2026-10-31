@@ -2,6 +2,7 @@
 
 export const profile = {
   name: "Siam Hossain",
+  email: "mdsiam4528@gmail.com",
   role: "I am",
   focus: ["Entrepreneur", "Cybersecurity", "Red teaming", "Ethical hacking"],
   tagline: "You can call me Siam",

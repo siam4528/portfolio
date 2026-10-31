@@ -1,19 +1,13 @@
 import { type FormEvent, useState } from "react";
-import emailjs from "@emailjs/browser";
 import { SectionHeading } from "../components/SectionHeading";
-import { links } from "../data/content";
+import { links, profile } from "../data/content";
 
-const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID;
-const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
-const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
-
-type Status = "idle" | "sending" | "sent" | "failed" | "not-configured";
+type Status = "idle" | "sending" | "sent" | "failed";
 
 const messages: Record<Exclude<Status, "idle">, string> = {
   sending: "Sending your message...",
   sent: "Message sent. I'll reply as soon as I can.",
-  failed: "Your message didn't send. Check your connection and try again, or reach me on LinkedIn.",
-  "not-configured": "This form isn't connected yet. Please reach me on LinkedIn for now.",
+  failed: `Your message didn't send. Check your connection and try again, or email me at ${profile.email}.`,
 };
 
 const fieldClass = "w-full border border-line bg-panel px-3 py-3 text-text placeholder:text-dim focus:border-neon focus:outline-none";
@@ -24,24 +18,24 @@ export function Contact() {
 
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!serviceId || !templateId || !publicKey) {
-      setStatus("not-configured");
-      return;
-    }
     const form = event.currentTarget;
     const data = new FormData(form);
     setStatus("sending");
     try {
-      await emailjs.send(
-        serviceId,
-        templateId,
-        {
-          from_name: String(data.get("name")),
-          reply_to: String(data.get("email")),
-          message: String(data.get("message")),
-        },
-        { publicKey },
-      );
+      const response = await fetch(`https://formsubmit.co/ajax/${profile.email}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({
+          name: data.get("name"),
+          email: data.get("email"),
+          message: data.get("message"),
+          _honey: data.get("_honey"),
+          _subject: "New message from your portfolio",
+          _template: "table",
+        }),
+      });
+      const result = await response.json();
+      if (!response.ok || String(result.success) !== "true") throw new Error(result.message);
       form.reset();
       setStatus("sent");
     } catch {
@@ -54,6 +48,11 @@ export function Contact() {
       <div className="grid content-start gap-6">
         <SectionHeading id="contact-title">Contact</SectionHeading>
         <ul className="m-0 grid list-none gap-2 p-0 font-mono text-sm">
+          <li>
+            <a href={`mailto:${profile.email}`} className="break-all text-cyan underline underline-offset-4 hover:text-neon">
+              {profile.email}
+            </a>
+          </li>
           {links.map(({ name, url }) => (
             <li key={name}>
               <a href={url} target="_blank" rel="noreferrer" className="text-cyan underline underline-offset-4 hover:text-neon">
@@ -65,6 +64,8 @@ export function Contact() {
       </div>
 
       <form className="grid gap-5" onSubmit={onSubmit}>
+        {/* Hidden from people. Bots that fill it in get rejected as spam. */}
+        <input className="hidden" name="_honey" tabIndex={-1} autoComplete="off" aria-hidden="true" />
         <div className="grid gap-5 sm:grid-cols-2">
           <div className="grid gap-2">
             <label className={labelClass} htmlFor="contact-name">Name</label>
