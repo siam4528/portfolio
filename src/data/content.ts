@@ -16,8 +16,8 @@ export const skills: Skill[] = [
   { name: "Cybersecurity", source: "Introduction to Cybersecurity, Cisco Networking Academy" },
   { name: "Computer Networking", source: "Introduction to Computer Networking, Simplilearn" },
   { name: "C", source: "Introduction to C Programming, Simplilearn" },
-  { name: "C++", source: "Introduction to C++ Programming, Simplilearn" },
-  { name: "Dart", source: "Practice programs, including a restaurant bill and a password generator" },
+  { name: "C++ (OOP)", source: "Introduction to C++ Programming, Simplilearn" },
+  { name: "Bash", source: "Learned while studying cybersecurity" },
   { name: "HTML", source: "Web page practice, including a first sketch of Help Hand" },
   { name: "CSS", source: "Web page practice, including a first sketch of Help Hand" },
 ];
@@ -56,6 +56,6 @@ export type Certification = {
 export const certifications: Certification[] = [
   { title: "Introduction to Computer Networking", issuer: "Simplilearn", skill: "Computer Networking" },
   { title: "Introduction to Cybersecurity", issuer: "Cisco Networking Academy", skill: "Cybersecurity" },
-  { title: "Introduction to C++ Programming", issuer: "Simplilearn", skill: "C++" },
+  { title: "Introduction to C++ Programming", issuer: "Simplilearn", skill: "C++ (OOP)" },
   { title: "Introduction to C Programming", issuer: "Simplilearn", skill: "C" },
 ];
